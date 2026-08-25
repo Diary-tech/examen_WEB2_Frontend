@@ -1,55 +1,54 @@
 import { useState } from 'react';
-import{useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const navigate = useNavigate();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
-    const response = await fetch('http://localhost:3000/api/auth/login', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json',},
-        body: JSON.stringify({ email, password }),
-    });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError(null);
+        setLoading(true);
 
-    const data = await response.json();
-    console.log(data);
-    if (response.ok) {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+        try {
+            const user = await login(email, password);
+            navigate(user.role === 'admin' ? '/admin' : '/student');
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-      if (data.user.role === 'admin') {
-        navigate('/admin');
-      } else {
-        navigate('/student');
-      }
-    } else {
-      alert(data.message);
-    }
-  };
+    return (
+        <form onSubmit={handleSubmit}>
+            <h1>Log in</h1>
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <h1>Log in</h1>
+            {error && <p role="alert">{error}</p>}
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+            <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+            />
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+            <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+            />
 
-      <button type="submit">Log in</button>
-    </form>
-  );
+            <button type="submit" disabled={loading}>
+                {loading ? 'Connexion...' : 'Log in'}
+            </button>
+        </form>
+    );
 }
