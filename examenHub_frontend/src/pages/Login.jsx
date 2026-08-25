@@ -4,9 +4,21 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const response = await fetch('http://localhost:3000/api/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json',},
+        body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+  }
+
   return (
-    <form>
-      <h1>Connexion</h1>
+    <form onSubmit={handleSubmit}>
+      <h1>Log in</h1>
 
       <input
         type="email"
@@ -17,12 +29,12 @@ export default function Login() {
 
       <input
         type="password"
-        placeholder="Mot de passe"
+        placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      <button type="submit">Se connecter</button>
+      <button type="submit">Log in</button>
     </form>
   );
 }
