@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import AdminHome from './pages/AdminHome.jsx';
 import StudentHome from './pages/StudentHome.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import AdminStudents from './pages/AdminStudents.jsx';
 
 function App() {
 
@@ -16,6 +17,14 @@ function App() {
         element={
           <ProtectedRoute role="admin">
             <AdminHome />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/students"
+        element={
+          <ProtectedRoute role="admin">
+            <AdminStudents />
           </ProtectedRoute>
         }
       />
