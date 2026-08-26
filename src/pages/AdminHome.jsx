@@ -35,17 +35,8 @@ export default function AdminHome() {
   };
 
   return (
-    <>
-      <nav aria-label="Admin navigation">
-        <ul>
-          <li><h1>Admin Dashboard</h1></li>
-          <li><Link to="/admin">Dashboard</Link></li>
-          <li><Link to="/admin/students">Students</Link></li>
-          <li><Link to="/admin/courses">Courses</Link></li>
-          <li><Link to="/admin/exams">Exams</Link></li>
-        </ul>
-      </nav>
-
+    <div className="page">
+    <h1>Admin Dashboard</h1>
       <main>
         <section className="stats">
           <article className="stat-card">
@@ -75,6 +66,6 @@ export default function AdminHome() {
           </ul>
         </section>
       </main>
-    </>
+    </div>
   );
 }
