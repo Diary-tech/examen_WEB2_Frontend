@@ -18,7 +18,7 @@ export default function StudentExam() {
 
     const loadExam = async () => {
         try {
-            const data = await get(`/exams/${id}`);
+            const data = await get(`/my/exams/${id}`);
             setExam(data);
         } catch (err) {
             setError(err.message);
@@ -47,7 +47,7 @@ export default function StudentExam() {
                 })
             );
 
-            await post(`/exams/${id}/submit`, {
+            await post(`/my/exams/${id}/submit`, {
                 answers: formattedAnswers,
             });
 

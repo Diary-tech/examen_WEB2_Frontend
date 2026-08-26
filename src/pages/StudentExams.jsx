@@ -6,12 +6,14 @@ export default function StudentExams() {
     const [exams, setExams] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+
     useEffect(() => {
         loadExams();
     }, []);
+
     const loadExams = async () => {
         try {
-            const data = await get('/exams/my');
+            const data = await get('/my/exams');
             setExams(data);
         } catch (err) {
             setError(err.message);
@@ -19,12 +21,14 @@ export default function StudentExams() {
             setLoading(false);
         }
     };
+
     const formatDate = (date) => {
         if (!date) return '-';
         const value = new Date(date);
         if (Number.isNaN(value.getTime())) return '-';
         return value.toLocaleString();
     };
+
     if (loading) {
         return (
             <div className="page">
@@ -33,6 +37,7 @@ export default function StudentExams() {
             </div>
         );
     }
+
     return (
         <div className="page">
             <h1>Available Exams</h1>
