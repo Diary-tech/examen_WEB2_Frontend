@@ -14,19 +14,74 @@ export default function AdminStudents() {
         loadStudents();
     }, []);
 
+    const loadStudents = async () => {
+        try {
+            const data = await get('/students');
+            setStudents(data);
+        }
+        catch (err) {
+            setError(err.message);
+        }
+    };
+
+    const resetForm = () => {
+        setEmail('');
+        setFullName('');
+        setPassword('');
+        setEditingId(null);
+        setShowForm(false);
+        setError('');
+    };
+
+    const openEditForm = (student) => {
+        setEditingId(student.id);
+        setEmail(student.email);
+        setFullName(student.fullName);
+        setPassword('');
+        setShowForm(true);
+        setError('');
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+        try {
+            if (editingId) {
+                await put(`/students/${editingId}`, { email, fullName });
+            } else {
+                await post('/students', { email, fullName, password });
+            }
+            resetForm();
+            loadStudents();
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+    const handleDeactivate = async (id) => {
+        if (!confirm('Désactiver cet étudiant ?')) return;
+        try {
+            await remove(`/students/${id}`);
+            loadStudents();
+        } catch (err) {
+            setError(err.message);
+        }
+    };
     return (
         <div className="page">
             <h1>Manage Students</h1>
             {!showForm && (
-                <button onClick={openCreateForm}>+ Ajouter un étudiant</button>
+                <button onClick={openCreateForm}>+ Add Student</button>
             )}
             {showForm && (
                 <form onSubmit={handleSubmit}>
-                    <h2>{editingId ? 'Modifier l\'étudiant' : 'Ajouter un étudiant'}</h2>
+                    <h2>{editingId ? 'Edit Student' : 'Add Student'}</h2>
 
                     <input
                         type="text"
-                        placeholder="Nom complet"
+                        placeholder="Full Name"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         required
@@ -41,7 +96,7 @@ export default function AdminStudents() {
                     {!editingId && (
                         <input
                             type="password"
-                            placeholder="Mot de passe initial"
+                            placeholder="Initial Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
@@ -49,14 +104,42 @@ export default function AdminStudents() {
                     )}
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button type="submit" disabled={loading}>
-                            {loading ? 'Enregistrement...' : editingId ? 'Mettre à jour' : 'Créer'}
+                            {loading ? 'Submitting...' : editingId ? 'Update' : 'Create'}
                         </button>
                         <button type="button" onClick={resetForm}>
-                            Annuler
+                            Cancel
                         </button>
                     </div>
                 </form>
             )}
+            <h2>List of Students</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {students.map((student) => (
+                        <tr key={student.id}>
+                            <td>{student.fullName}</td>
+                            <td>{student.email}</td>
+                            <td>{student.isActive ? 'Active' : 'Inactive'}</td>
+                            <td>
+                                <button onClick={() => openEditForm(student)}>Edit</button>
+                                {student.isActive && (
+                                    <button onClick={() => handleDeactivate(student.id)}>
+                                        Desactivate
+                                    </button>
+                                )}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 }
