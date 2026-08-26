@@ -13,12 +13,14 @@ export default function AdminQuestions() {
     const [statement, setStatement] = useState('');
     const [points, setPoints] = useState('');
     const [choices, setChoices] = useState([
-        { text: '', isCorrect: true },
-        { text: '', isCorrect: false }
+        { label: '', isCorrect: true },
+        { label: '', isCorrect: false }
     ]);
+
     useEffect(() => {
         loadQuestions();
     }, [id]);
+
     const loadQuestions = async () => {
         try {
             const data = await get(`/exams/${id}/questions`);
@@ -27,22 +29,25 @@ export default function AdminQuestions() {
             setError(err.message);
         }
     };
+
     const resetForm = () => {
         setStatement('');
         setPoints('');
         setChoices([
-            { text: '', isCorrect: true },
-            { text: '', isCorrect: false }
+            { label: '', isCorrect: true },
+            { label: '', isCorrect: false }
         ]);
         setEditingId(null);
         setShowForm(false);
     };
+
     const openCreateForm = () => {
         resetForm();
         setError('');
         setSuccess('');
         setShowForm(true);
     };
+
     const openEditForm = (question) => {
         setEditingId(question.id);
         setStatement(question.statement);
@@ -50,7 +55,7 @@ export default function AdminQuestions() {
         setChoices(
             question.choices.map((choice) => ({
                 id: choice.id,
-                text: choice.text,
+                label: choice.label,
                 isCorrect: choice.isCorrect
             }))
         );
@@ -58,6 +63,7 @@ export default function AdminQuestions() {
         setError('');
         setSuccess('');
     };
+
     const updateChoice = (index, field, value) => {
         setChoices((current) =>
             current.map((choice, i) =>
@@ -65,6 +71,7 @@ export default function AdminQuestions() {
             )
         );
     };
+
     const setCorrectChoice = (index) => {
         setChoices((current) =>
             current.map((choice, i) => ({
@@ -73,43 +80,52 @@ export default function AdminQuestions() {
             }))
         );
     };
+
     const addChoice = () => {
         if (choices.length >= 6) return;
         setChoices((current) => [
             ...current,
-            { text: '', isCorrect: false }
+            { label: '', isCorrect: false }
         ]);
     };
+
     const removeChoice = (index) => {
         if (choices.length <= 2) return;
         setChoices((current) => current.filter((_, i) => i !== index));
     };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setSuccess('');
+
         if (choices.length < 2 || choices.length > 6) {
             setError('A question must have between 2 and 6 choices');
             return;
         }
+
         if (choices.filter((choice) => choice.isCorrect).length !== 1) {
             setError('A question must have exactly one correct choice');
             return;
         }
-        if (choices.some((choice) => !choice.text.trim())) {
-            setError('All choices must have a text');
+
+        if (choices.some((choice) => !choice.label.trim())) {
+            setError('All choices must have a label');
             return;
         }
+
         setLoading(true);
+
         try {
             const payload = {
                 statement,
                 points: Number(points),
                 choices: choices.map((choice) => ({
-                    text: choice.text.trim(),
+                    label: choice.label.trim(),
                     isCorrect: choice.isCorrect
                 }))
             };
+
             if (editingId) {
                 await put(`/questions/${editingId}`, payload);
                 setSuccess('Question updated successfully.');
@@ -117,6 +133,7 @@ export default function AdminQuestions() {
                 await post(`/exams/${id}/questions`, payload);
                 setSuccess('Question created successfully.');
             }
+
             resetForm();
             await loadQuestions();
         } catch (err) {
@@ -125,10 +142,13 @@ export default function AdminQuestions() {
             setLoading(false);
         }
     };
+
     const handleDelete = async (questionId) => {
         if (!window.confirm('Delete this question?')) return;
+
         setError('');
         setSuccess('');
+
         try {
             await remove(`/questions/${questionId}`);
             setSuccess('Question deleted successfully.');
@@ -137,18 +157,23 @@ export default function AdminQuestions() {
             setError(err.message);
         }
     };
+
     return (
         <div className="page">
             <Link to="/admin/exams">← Back to Exams</Link>
             <h1>Manage Questions</h1>
+
             {error && <p className="error">{error}</p>}
             {success && <p>{success}</p>}
+
             {!showForm && (
                 <button onClick={openCreateForm}>+ Add Question</button>
             )}
+
             {showForm && (
                 <form onSubmit={handleSubmit}>
                     <h2>{editingId ? 'Edit Question' : 'Add Question'}</h2>
+
                     <div>
                         <label htmlFor="statement">Statement</label>
                         <textarea
@@ -158,30 +183,34 @@ export default function AdminQuestions() {
                             required
                         />
                     </div>
+
                     <div>
                         <label htmlFor="points">Points</label>
                         <input
                             id="points"
                             type="number"
                             min="1"
-                            step="0.01"
+                            step="1"
                             value={points}
                             onChange={(e) => setPoints(e.target.value)}
                             required
                         />
                     </div>
+
                     <h3>Choices</h3>
+
                     {choices.map((choice, index) => (
                         <div key={index}>
                             <input
                                 type="text"
                                 placeholder={`Choice ${index + 1}`}
-                                value={choice.text}
+                                value={choice.label}
                                 onChange={(e) =>
-                                    updateChoice(index, 'text', e.target.value)
+                                    updateChoice(index, 'label', e.target.value)
                                 }
                                 required
                             />
+
                             <label>
                                 <input
                                     type="radio"
@@ -191,6 +220,7 @@ export default function AdminQuestions() {
                                 />
                                 Correct
                             </label>
+
                             {choices.length > 2 && (
                                 <button
                                     type="button"
@@ -201,22 +231,27 @@ export default function AdminQuestions() {
                             )}
                         </div>
                     ))}
+
                     {choices.length < 6 && (
                         <button type="button" onClick={addChoice}>
                             + Add Choice
                         </button>
                     )}
+
                     <div>
                         <button type="submit" disabled={loading}>
                             {loading ? 'Submitting...' : editingId ? 'Update' : 'Create'}
                         </button>
+
                         <button type="button" onClick={resetForm}>
                             Cancel
                         </button>
                     </div>
                 </form>
             )}
+
             <h2>Questions</h2>
+
             {questions.length === 0 ? (
                 <p>No questions found.</p>
             ) : (
@@ -230,6 +265,7 @@ export default function AdminQuestions() {
                         <th>Actions</th>
                     </tr>
                     </thead>
+
                     <tbody>
                     {questions.map((question) => (
                         <tr key={question.id}>
@@ -240,16 +276,18 @@ export default function AdminQuestions() {
                                 <ul>
                                     {question.choices?.map((choice) => (
                                         <li key={choice.id}>
-                                            {choice.text}
+                                            {choice.label}
                                             {choice.isCorrect ? ' ✓' : ''}
                                         </li>
                                     ))}
                                 </ul>
                             </td>
+
                             <td>
                                 <button onClick={() => openEditForm(question)}>
                                     Edit
                                 </button>
+
                                 <button onClick={() => handleDelete(question.id)}>
                                     Delete
                                 </button>
