@@ -8,6 +8,7 @@ import AdminExams from './pages/AdminExams.jsx';
 import AdminQuestions from './pages/AdminQuestions.jsx';
 import AdminExamResults from './pages/AdminExamResults.jsx';
 import StudentHome from './pages/StudentHome.jsx';
+import StudentExams from './pages/StudentExams.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import './App.css';
 
@@ -36,6 +37,14 @@ function App() {
                 element={
                     <ProtectedRoute role="student">
                         <StudentHome />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/student/exams"
+                element={
+                    <ProtectedRoute role="student">
+                        <StudentExams />
                     </ProtectedRoute>
                 }
             />
