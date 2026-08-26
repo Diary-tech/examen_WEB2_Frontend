@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 .env
+
+examen_WEB2_Backend/
+.idea/
