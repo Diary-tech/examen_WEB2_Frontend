@@ -9,6 +9,7 @@ import AdminQuestions from './pages/AdminQuestions.jsx';
 import AdminExamResults from './pages/AdminExamResults.jsx';
 import StudentHome from './pages/StudentHome.jsx';
 import StudentExams from './pages/StudentExams.jsx';
+import StudentExam from './pages/StudentExam.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import './App.css';
 
@@ -17,14 +18,7 @@ function App() {
         <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
-            <Route
-                path="/admin"
-                element={
-                    <ProtectedRoute role="admin">
-                        <AdminLayout />
-                    </ProtectedRoute>
-                }
-            >
+            <Route path="/admin" element={<ProtectedRoute role="admin"><AdminLayout /></ProtectedRoute>}>
                 <Route index element={<AdminHome />} />
                 <Route path="students" element={<AdminStudents />} />
                 <Route path="courses" element={<AdminCourses />} />
@@ -32,22 +26,9 @@ function App() {
                 <Route path="exams/:id/questions" element={<AdminQuestions />} />
                 <Route path="exams/:id/results" element={<AdminExamResults />} />
             </Route>
-            <Route
-                path="/student"
-                element={
-                    <ProtectedRoute role="student">
-                        <StudentHome />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/student/exams"
-                element={
-                    <ProtectedRoute role="student">
-                        <StudentExams />
-                    </ProtectedRoute>
-                }
-            />
+            <Route path="/student" element={<ProtectedRoute role="student"><StudentHome /></ProtectedRoute>} />
+            <Route path="/student/exams" element={<ProtectedRoute role="student"><StudentExams /></ProtectedRoute>} />
+            <Route path="/student/exams/:id" element={<ProtectedRoute role="student"><StudentExam /></ProtectedRoute>} />
         </Routes>
     );
 }
