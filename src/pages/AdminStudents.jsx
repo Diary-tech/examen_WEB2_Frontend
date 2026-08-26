@@ -6,6 +6,9 @@ export default function AdminStudents() {
     const [showForm, setShowForm] = useState(false);
     const [editingId, setEditingId] = useState(null);
 
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
     const [email, setEmail] = useState('');
     const [fullName, setFullName] = useState('');
     const [password, setPassword] = useState('');
@@ -31,6 +34,11 @@ export default function AdminStudents() {
         setEditingId(null);
         setShowForm(false);
         setError('');
+    };
+
+    const openCreateForm = () => {   
+        resetForm();
+        setShowForm(true);
     };
 
     const openEditForm = (student) => {
