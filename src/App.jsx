@@ -6,6 +6,7 @@ import AdminStudents from './pages/AdminStudents.jsx';
 import AdminCourses from './pages/AdminCourses.jsx';
 import AdminExams from './pages/AdminExams.jsx';
 import AdminQuestions from './pages/AdminQuestions.jsx';
+import AdminExamResults from './pages/AdminExamResults.jsx';
 import StudentHome from './pages/StudentHome.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import './App.css';
@@ -28,6 +29,7 @@ function App() {
                 <Route path="courses" element={<AdminCourses />} />
                 <Route path="exams" element={<AdminExams />} />
                 <Route path="exams/:id/questions" element={<AdminQuestions />} />
+                <Route path="exams/:id/results" element={<AdminExamResults />} />
             </Route>
             <Route
                 path="/student"
