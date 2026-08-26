@@ -5,6 +5,7 @@ import AdminHome from './pages/AdminHome.jsx';
 import AdminStudents from './pages/AdminStudents.jsx';
 import StudentHome from './pages/StudentHome.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import AdminCourses from './pages/AdminCourses.jsx';
 import './App.css';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
       >
         <Route index element={<AdminHome />} />
         <Route path="students" element={<AdminStudents />} />
+        <Route path="courses" element={<AdminCourses />} />
       </Route>
 
       <Route
