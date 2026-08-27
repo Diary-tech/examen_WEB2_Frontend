@@ -77,6 +77,14 @@ export default function AdminStudents() {
             setError(err.message);
         }
     };
+    const handleActivate = async (id) => {
+    try {
+        await put(`/students/${id}/activate`, {});
+        loadStudents();
+    } catch (err) {
+        setError(err.message);
+    }
+};
     return (
         <div className="page">
             <h1>Manage Students</h1>
@@ -137,13 +145,18 @@ export default function AdminStudents() {
                             <td>{student.email}</td>
                             <td>{student.isActive ? 'Active' : 'Inactive'}</td>
                             <td>
-                                <button onClick={() => openEditForm(student)}>Edit</button>
-                                {student.isActive && (
-                                    <button onClick={() => handleDeactivate(student.id)}>
-                                        Desactivate
-                                    </button>
-                                )}
-                            </td>
+    <button onClick={() => openEditForm(student)}>Edit</button>
+    {student.isActive && (
+        <button onClick={() => handleDeactivate(student.id)}>
+            Desactivate
+        </button>
+    )}
+    {!student.isActive && (
+        <button onClick={() => handleActivate(student.id)}>
+            Activate
+        </button>
+    )}
+</td>
                         </tr>
                     ))}
                 </tbody>
