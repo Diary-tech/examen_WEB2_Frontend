@@ -11,6 +11,9 @@ import StudentHome from './pages/StudentHome.jsx';
 import StudentExams from './pages/StudentExams.jsx';
 import StudentExam from './pages/StudentExam.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import StudentLayout from './components/StudentLayout.jsx';
+import StudentExamResult from './pages/StudentExamResult.jsx';
+import StudentResults from './pages/StudentResults.jsx';
 import './App.css';
 
 function App() {
@@ -26,9 +29,19 @@ function App() {
                 <Route path="exams/:id/questions" element={<AdminQuestions />} />
                 <Route path="exams/:id/results" element={<AdminExamResults />} />
             </Route>
-            <Route path="/student" element={<ProtectedRoute role="student"><StudentHome /></ProtectedRoute>} />
-            <Route path="/student/exams" element={<ProtectedRoute role="student"><StudentExams /></ProtectedRoute>} />
-            <Route path="/student/exams/:id" element={<ProtectedRoute role="student"><StudentExam /></ProtectedRoute>} />
+            <Route
+                path="/student"
+                element={
+                    <ProtectedRoute role="student">
+                        <StudentLayout />
+                    </ProtectedRoute>
+                }
+            >
+                <Route index element={<StudentExams />} />
+                <Route path="exams/:id" element={<StudentExam />} />
+                <Route path="exams/:id/result" element={<StudentExamResult />} />
+                <Route path="results" element={<StudentResults />} />
+            </Route>
         </Routes>
     );
 }
