@@ -1,6 +1,15 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function AdminLayout() {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <>
       <nav aria-label="Admin navigation">
@@ -10,6 +19,11 @@ export default function AdminLayout() {
           <li><Link to="/admin/students">Students</Link></li>
           <li><Link to="/admin/courses">Courses</Link></li>
           <li><Link to="/admin/exams">Exams</Link></li>
+          <li>
+            <button className="logout-btn" onClick={handleLogout}>
+              Log out
+            </button>
+          </li>
         </ul>
       </nav>
 
