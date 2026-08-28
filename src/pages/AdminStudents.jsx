@@ -10,7 +10,7 @@ export default function AdminStudents() {
     const [loading, setLoading] = useState(false);
 
     const [email, setEmail] = useState('');
-    const [fullName, setFullName] = useState('');
+    const [name, setName] = useState('');
     const [password, setPassword] = useState('');
 
     useEffect(() => {
@@ -29,14 +29,14 @@ export default function AdminStudents() {
 
     const resetForm = () => {
         setEmail('');
-        setFullName('');
+        setName('');
         setPassword('');
         setEditingId(null);
         setShowForm(false);
         setError('');
     };
 
-    const openCreateForm = () => {   
+    const openCreateForm = () => {
         resetForm();
         setShowForm(true);
     };
@@ -44,7 +44,7 @@ export default function AdminStudents() {
     const openEditForm = (student) => {
         setEditingId(student.id);
         setEmail(student.email);
-        setFullName(student.fullName);
+        setName(student.name);
         setPassword('');
         setShowForm(true);
         setError('');
@@ -56,9 +56,9 @@ export default function AdminStudents() {
         setLoading(true);
         try {
             if (editingId) {
-                await put(`/students/${editingId}`, { email, fullName });
+                await put(`/students/${editingId}`, { email, name });
             } else {
-                await post('/students', { email, fullName, password });
+                await post('/students', { email, name, password });
             }
             resetForm();
             loadStudents();
@@ -78,13 +78,13 @@ export default function AdminStudents() {
         }
     };
     const handleActivate = async (id) => {
-    try {
-        await put(`/students/${id}/activate`, {});
-        loadStudents();
-    } catch (err) {
-        setError(err.message);
-    }
-};
+        try {
+            await put(`/students/${id}/activate`, {});
+            loadStudents();
+        } catch (err) {
+            setError(err.message);
+        }
+    };
     return (
         <div className="page">
             <h1>Manage Students</h1>
@@ -98,8 +98,8 @@ export default function AdminStudents() {
                     <input
                         type="text"
                         placeholder="Full Name"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                         required
                     />
                     <input
@@ -141,22 +141,22 @@ export default function AdminStudents() {
                 <tbody>
                     {students.map((student) => (
                         <tr key={student.id}>
-                            <td>{student.fullName}</td>
+                            <td>{student.name}</td>
                             <td>{student.email}</td>
-                            <td>{student.isActive ? 'Active' : 'Inactive'}</td>
+                            <td>{student.is_active ? 'Active' : 'Inactive'}</td>
                             <td>
-    <button onClick={() => openEditForm(student)}>Edit</button>
-    {student.isActive && (
-        <button onClick={() => handleDeactivate(student.id)}>
-            Desactivate
-        </button>
-    )}
-    {!student.isActive && (
-        <button onClick={() => handleActivate(student.id)}>
-            Activate
-        </button>
-    )}
-</td>
+                                <button onClick={() => openEditForm(student)}>Edit</button>
+                                {student.is_active && (
+                                    <button onClick={() => handleDeactivate(student.id)}>
+                                        Desactivate
+                                    </button>
+                                )}
+                                {!student.is_active && (
+                                    <button onClick={() => handleActivate(student.id)}>
+                                        Activate
+                                    </button>
+                                )}
+                            </td>
                         </tr>
                     ))}
                 </tbody>
