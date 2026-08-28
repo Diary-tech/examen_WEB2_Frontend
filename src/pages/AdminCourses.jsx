@@ -131,6 +131,7 @@ export default function AdminCourses() {
             <th>Code</th>
             <th>Name</th>
             <th>Description</th>
+            <th>Exams</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -140,9 +141,15 @@ export default function AdminCourses() {
               <td>{course.code}</td>
               <td>{course.name}</td>
               <td>{course.description || '—'}</td>
+              <td>{course.exam_count ?? 0}</td>
               <td>
                 <button onClick={() => openEditForm(course)}>Edit</button>
-                <button onClick={() => handleDelete(course.id)}>Delete</button>
+                <button
+                  onClick={() => handleDelete(course.id)}
+                  disabled={Number(course.exam_count) > 0}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}

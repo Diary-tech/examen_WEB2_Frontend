@@ -1,47 +1,15 @@
-import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { get } from '../api/client.js';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 export default function StudentExamResult() {
-  const { id } = useParams();
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { result, examTitle } = location.state || {};
 
-  useEffect(() => {
-    loadResult();
-  }, [id]);
-
-  const loadResult = async () => {
-    try {
-      const results = await get('/my/results');
-      const found = results.find((r) => r.examId === Number(id));
-      if (!found) {
-        setError("No result found for this exam.");
-      } else {
-        setResult(found);
-      }
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
+  if (!result) {
     return (
       <div className="page">
         <h1>Result</h1>
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="page">
-        <h1>Result</h1>
-        <p className="error">{error}</p>
+        <p className="error">No result to display. Please take the exam first.</p>
         <Link to="/student">Back to exams</Link>
       </div>
     );
@@ -49,23 +17,23 @@ export default function StudentExamResult() {
 
   return (
     <div className="page">
-      <h1>{result.examTitle}</h1>
-      <h2>Score : {result.score} / {result.maxScore}</h2>
+      <h1>{examTitle}</h1>
+      <h2>Score : {result.score} / {result.total_points}</h2>
 
       <h3>Correction</h3>
-      {result.corrections.map((c, index) => (
+      {result.correction.map((c, index) => (
         <div
-          key={c.questionId}
+          key={c.question_id}
           style={{
             padding: '0.75rem',
             marginBottom: '0.5rem',
-            borderLeft: `4px solid ${c.isCorrect ? 'green' : 'red'}`,
-            backgroundColor: c.isCorrect ? '#f0fdf4' : '#fef2f2',
+            borderLeft: `4px solid ${c.is_correct ? 'green' : 'red'}`,
+            backgroundColor: c.is_correct ? '#f0fdf4' : '#fef2f2',
           }}
         >
           <p><strong>{index + 1}. {c.statement}</strong> ({c.points} pts)</p>
-          <p>Your answer : {c.selectedChoiceId ?? 'No response'}</p>
-          <p>{c.isCorrect ? 'True' : `False`}</p>
+          <p>Your answer : {c.student_choice_id ?? 'No response'}</p>
+          <p>{c.is_correct ? 'True' : 'False'}</p>
         </div>
       ))}
 

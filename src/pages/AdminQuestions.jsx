@@ -13,8 +13,8 @@ export default function AdminQuestions() {
     const [statement, setStatement] = useState('');
     const [points, setPoints] = useState('');
     const [choices, setChoices] = useState([
-        { label: '', isCorrect: true },
-        { label: '', isCorrect: false }
+        { text: '', isCorrect: true },
+        { text: '', isCorrect: false }
     ]);
 
     useEffect(() => {
@@ -34,8 +34,8 @@ export default function AdminQuestions() {
         setStatement('');
         setPoints('');
         setChoices([
-            { label: '', isCorrect: true },
-            { label: '', isCorrect: false }
+            { text: '', isCorrect: true },
+            { text: '', isCorrect: false }
         ]);
         setEditingId(null);
         setShowForm(false);
@@ -55,8 +55,8 @@ export default function AdminQuestions() {
         setChoices(
             question.choices.map((choice) => ({
                 id: choice.id,
-                label: choice.label,
-                isCorrect: choice.isCorrect
+                text: choice.text,
+                isCorrect: choice.is_correct
             }))
         );
         setShowForm(true);
@@ -85,7 +85,7 @@ export default function AdminQuestions() {
         if (choices.length >= 6) return;
         setChoices((current) => [
             ...current,
-            { label: '', isCorrect: false }
+            { text: '', isCorrect: false }
         ]);
     };
 
@@ -109,8 +109,8 @@ export default function AdminQuestions() {
             return;
         }
 
-        if (choices.some((choice) => !choice.label.trim())) {
-            setError('All choices must have a label');
+        if (choices.some((choice) => !choice.text.trim())) {
+            setError('All choices must have a text');
             return;
         }
 
@@ -121,8 +121,8 @@ export default function AdminQuestions() {
                 statement,
                 points: Number(points),
                 choices: choices.map((choice) => ({
-                    label: choice.label.trim(),
-                    isCorrect: choice.isCorrect
+                    text: choice.text.trim(),
+                    is_correct: choice.isCorrect
                 }))
             };
 
@@ -204,9 +204,9 @@ export default function AdminQuestions() {
                             <input
                                 type="text"
                                 placeholder={`Choice ${index + 1}`}
-                                value={choice.label}
+                                value={choice.text}
                                 onChange={(e) =>
-                                    updateChoice(index, 'label', e.target.value)
+                                    updateChoice(index, 'text', e.target.value)
                                 }
                                 required
                             />
@@ -276,8 +276,8 @@ export default function AdminQuestions() {
                                 <ul>
                                     {question.choices?.map((choice) => (
                                         <li key={choice.id}>
-                                            {choice.label}
-                                            {choice.isCorrect ? ' ✓' : ''}
+                                            {choice.text}
+                                            {choice.is_correct ? ' ✓' : ''}
                                         </li>
                                     ))}
                                 </ul>
