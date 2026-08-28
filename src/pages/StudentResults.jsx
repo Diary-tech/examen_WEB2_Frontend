@@ -52,7 +52,7 @@ export default function StudentResults() {
           <tbody>
             {results.map((r) => (
               <tr key={`${r.exam_id}-${r.submitted_at}`}>
-                <td>{r.title}</td>
+                <td>{r.exam_title}</td>
                 <td>{r.course_code}</td>
                 <td>{r.score} / {r.total_points}</td>
                 <td>{new Date(r.submitted_at).toLocaleString()}</td>
