@@ -67,11 +67,11 @@ export default function AdminExams() {
 
     const openEditForm = (exam) => {
         setEditingId(exam.id);
-        setCourseId(String(exam.courseId));
+        setCourseId(String(exam.course?.id ?? ''));
         setTitle(exam.title || '');
         setDescription(exam.description || '');
-        setStartsAt(formatDateForInput(exam.startsAt));
-        setEndsAt(formatDateForInput(exam.endsAt));
+        setStartsAt(formatDateForInput(exam.starts_at));
+        setEndsAt(formatDateForInput(exam.ends_at));
         setShowForm(true);
         setError('');
         setSuccess('');
@@ -94,17 +94,17 @@ export default function AdminExams() {
                 await put(`/exams/${editingId}`, {
                     title,
                     description,
-                    startsAt: new Date(startsAt).toISOString(),
-                    endsAt: new Date(endsAt).toISOString()
+                    starts_at: new Date(startsAt).toISOString(),
+                    ends_at: new Date(endsAt).toISOString()
                 });
                 setSuccess('Exam updated successfully.');
             } else {
                 await post('/exams', {
-                    courseId: Number(courseId),
+                    course_id: Number(courseId),
                     title,
                     description,
-                    startsAt: new Date(startsAt).toISOString(),
-                    endsAt: new Date(endsAt).toISOString()
+                    starts_at: new Date(startsAt).toISOString(),
+                    ends_at: new Date(endsAt).toISOString()
                 });
                 setSuccess('Exam created successfully.');
             }
@@ -144,17 +144,17 @@ export default function AdminExams() {
     };
 
     const getCourseName = (exam) => {
-        if (exam.courseName) return exam.courseName;
+        if (exam.course) return `${exam.course.code} - ${exam.course.name}`;
 
-        const course = courses.find((item) => item.id === exam.courseId);
+        const course = courses.find((item) => item.id === exam.course?.id);
 
         return course
             ? `${course.code} - ${course.name}`
-            : `Course #${exam.courseId}`;
+            : `Course #${exam.course?.id ?? '?'}`;
     };
 
     const isLocked = (exam) => {
-        return exam.isLocked === true || Number(exam.attemptsCount) > 0;
+        return Number(exam.attempt_count) > 0;
     };
 
     return (
@@ -262,6 +262,7 @@ export default function AdminExams() {
                         <th>Course</th>
                         <th>Start</th>
                         <th>End</th>
+                        <th>Questions</th>
                         <th>Attempts</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -276,9 +277,10 @@ export default function AdminExams() {
                             <tr key={exam.id}>
                                 <td>{exam.title}</td>
                                 <td>{getCourseName(exam)}</td>
-                                <td>{formatDate(exam.startsAt)}</td>
-                                <td>{formatDate(exam.endsAt)}</td>
-                                <td>{exam.attemptsCount ?? 0}</td>
+                                <td>{formatDate(exam.starts_at)}</td>
+                                <td>{formatDate(exam.ends_at)}</td>
+                                <td>{exam.question_count ?? 0}</td>
+                                <td>{exam.attempt_count ?? 0}</td>
                                 <td>
                                     {locked ? 'Locked' : 'Editable'}
                                 </td>
