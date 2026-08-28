@@ -1,5 +1,6 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import '../style/style.css';
 
 export default function StudentLayout() {
   const navigate = useNavigate();

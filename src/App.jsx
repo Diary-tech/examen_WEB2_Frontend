@@ -16,7 +16,6 @@ import StudentExamResult from './pages/StudentExamResult.jsx';
 import StudentResults from './pages/StudentResults.jsx';
 
 import ProtectedRoute from './components/ProtectedRoute.jsx';
-import './App.css';
 
 function App() {
   return (

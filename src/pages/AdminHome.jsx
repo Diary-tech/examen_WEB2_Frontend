@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { get } from '../api/client.js';
-import './AdminHome.css';
+import '../style/AdminHome.css';
+import '../style/style.css';
 
 export default function AdminHome() {
   const [counts, setCounts] = useState({

@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import '../style/style.css';
 
 export default function StudentExamResult() {
   const location = useLocation();
