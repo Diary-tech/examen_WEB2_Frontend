@@ -100,11 +100,11 @@ export default function AdminExams() {
                 setSuccess('Exam updated successfully.');
             } else {
                 await post('/exams', {
-                    course_id: Number(courseId),
+                    courseId: Number(courseId),
                     title,
                     description,
-                    starts_at: new Date(startsAt).toISOString(),
-                    ends_at: new Date(endsAt).toISOString()
+                    startsAt: new Date(startsAt).toISOString(),
+                    endsAt: new Date(endsAt).toISOString()
                 });
                 setSuccess('Exam created successfully.');
             }
