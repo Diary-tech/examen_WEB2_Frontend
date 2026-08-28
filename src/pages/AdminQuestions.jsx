@@ -55,8 +55,8 @@ export default function AdminQuestions() {
         setChoices(
             question.choices.map((choice) => ({
                 id: choice.id,
-                text: choice.text,
-                isCorrect: choice.is_correct
+                text: choice.label ?? choice.text,
+                isCorrect: choice.is_correct ?? choice.isCorrect
             }))
         );
         setShowForm(true);
@@ -121,8 +121,8 @@ export default function AdminQuestions() {
                 statement,
                 points: Number(points),
                 choices: choices.map((choice) => ({
-                    text: choice.text.trim(),
-                    is_correct: choice.isCorrect
+                    label: choice.text.trim(),
+                    isCorrect: choice.isCorrect
                 }))
             };
 
@@ -273,12 +273,11 @@ export default function AdminQuestions() {
                             <td>{question.statement}</td>
                             <td>{question.points}</td>
                             <td>
-                                <ul>
-                                    {question.choices?.map((choice) => (
-                                        <li key={choice.id}>
-                                            {choice.text}
-                                            {choice.is_correct ? ' ✓' : ''}
-                                        </li>
+                                <ul>{question.choices?.map((choice) => (
+                                    <li key={choice.id}>
+                                        {choice.label ?? choice.text}
+                                        {(choice.is_correct || choice.isCorrect) ? ' ✓' : ''}
+                                    </li>
                                     ))}
                                 </ul>
                             </td>
