@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import '../style/style.css';
 
 export default function Login() {
     const [email, setEmail] = useState('');
@@ -27,28 +28,30 @@ export default function Login() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h1>Log in</h1>
+        <div className="login-page">
+            <form className="login-form" onSubmit={handleSubmit}>
+                <h1>Log in</h1>
 
-            {error && <p role="alert">{error}</p>}
+                {error && <p className="login-error" role="alert">{error}</p>}
 
-            <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
 
-            <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
 
-            <button type="submit" disabled={loading}>
-                {loading ? 'Connexion...' : 'Log in'}
-            </button>
-        </form>
+                <button type="submit" disabled={loading}>
+                    {loading ? 'Connexion...' : 'Log in'}
+                </button>
+            </form>
+        </div>
     );
 }

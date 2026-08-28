@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { get } from '../api/client.js';
+import '../style/style.css';
 
 export default function StudentExams() {
     const [exams, setExams] = useState([]);

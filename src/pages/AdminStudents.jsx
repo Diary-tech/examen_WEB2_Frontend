@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { get, post, put, remove } from '../api/client.js';
+import '../style/style.css';
 
 export default function AdminStudents() {
     const [students, setStudents] = useState([]);

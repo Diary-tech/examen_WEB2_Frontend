@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { get, post } from '../api/client.js';
+import '../style/style.css';
 
 export default function StudentExam() {
     const { id } = useParams();

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { get } from '../api/client.js';
+import '../style/style.css';
 
 export default function StudentResults() {
   const [results, setResults] = useState([]);
