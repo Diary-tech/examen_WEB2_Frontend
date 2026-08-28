@@ -42,17 +42,21 @@ export default function StudentExam() {
     try {
         const formattedAnswers = Object.entries(answers).map(
             ([questionId, choiceId]) => ({
-                question_id: Number(questionId),
-                choice_id: Number(choiceId),
+                questionId: Number(questionId),
+                choiceId: Number(choiceId),
             })
         );
-
         const result = await post(`/my/exams/${id}/submit`, {
-            answers: formattedAnswers,
-        });
+  answers: formattedAnswers,
+});
 
-        navigate(`/student/exams/${id}/result`, { state: { result, examTitle: exam.title } });
-    } catch (err) {
+navigate(`/student/exams/${id}/result`, {
+  state: {
+    result,
+    examTitle: exam?.title,
+  },
+});
+       } catch (err) {
         setError(err.message);
     } finally {
         setSubmitting(false);
@@ -106,7 +110,7 @@ export default function StudentExam() {
                                         checked={answers[question.id] === choice.id}
                                         onChange={() => handleChoiceChange(question.id, choice.id)}
                                     />
-                                    {choice.text}
+                                    {choice.label ?? choice.text}
                                 </label>
                             ))}
                         </div>
