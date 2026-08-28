@@ -59,20 +59,26 @@ export default function AdminExams() {
 
     const formatDateForInput = (date) => {
         if (!date) return '';
+
         const value = new Date(date);
+
         if (Number.isNaN(value.getTime())) return '';
+
         const offset = value.getTimezoneOffset();
         const localDate = new Date(value.getTime() - offset * 60000);
+
         return localDate.toISOString().slice(0, 16);
     };
 
     const openEditForm = (exam) => {
+        const examCourseId = exam.course_id ?? exam.courseId ?? exam.course?.id ?? '';
+
         setEditingId(exam.id);
-        setCourseId(String(exam.course?.id ?? ''));
+        setCourseId(String(examCourseId));
         setTitle(exam.title || '');
         setDescription(exam.description || '');
-        setStartsAt(formatDateForInput(exam.starts_at));
-        setEndsAt(formatDateForInput(exam.ends_at));
+        setStartsAt(formatDateForInput(exam.starts_at ?? exam.startsAt));
+        setEndsAt(formatDateForInput(exam.ends_at ?? exam.endsAt));
         setShowForm(true);
         setError('');
         setSuccess('');
@@ -95,9 +101,10 @@ export default function AdminExams() {
                 await put(`/exams/${editingId}`, {
                     title,
                     description,
-                    starts_at: new Date(startsAt).toISOString(),
-                    ends_at: new Date(endsAt).toISOString()
+                    startsAt: new Date(startsAt).toISOString(),
+                    endsAt: new Date(endsAt).toISOString()
                 });
+
                 setSuccess('Exam updated successfully.');
             } else {
                 await post('/exams', {
@@ -107,6 +114,7 @@ export default function AdminExams() {
                     startsAt: new Date(startsAt).toISOString(),
                     endsAt: new Date(endsAt).toISOString()
                 });
+
                 setSuccess('Exam created successfully.');
             }
 
@@ -145,13 +153,19 @@ export default function AdminExams() {
     };
 
     const getCourseName = (exam) => {
-        if (exam.course) return `${exam.course.code} - ${exam.course.name}`;
+        if (exam.course) {
+            return `${exam.course.code} - ${exam.course.name}`;
+        }
 
-        const course = courses.find((item) => item.id === exam.course?.id);
+        const examCourseId = exam.course_id ?? exam.courseId;
+
+        const course = courses.find(
+            (item) => Number(item.id) === Number(examCourseId)
+        );
 
         return course
             ? `${course.code} - ${course.name}`
-            : `Course #${exam.course?.id ?? '?'}`;
+            : `Course #${examCourseId ?? '?'}`;
     };
 
     const isLocked = (exam) => {
@@ -176,6 +190,7 @@ export default function AdminExams() {
                     {!editingId && (
                         <div>
                             <label htmlFor="courseId">Course</label>
+
                             <select
                                 id="courseId"
                                 value={courseId}
@@ -195,6 +210,7 @@ export default function AdminExams() {
 
                     <div>
                         <label htmlFor="title">Title</label>
+
                         <input
                             id="title"
                             type="text"
@@ -206,6 +222,7 @@ export default function AdminExams() {
 
                     <div>
                         <label htmlFor="description">Description</label>
+
                         <textarea
                             id="description"
                             value={description}
@@ -215,6 +232,7 @@ export default function AdminExams() {
 
                     <div>
                         <label htmlFor="startsAt">Start date</label>
+
                         <input
                             id="startsAt"
                             type="datetime-local"
@@ -226,6 +244,7 @@ export default function AdminExams() {
 
                     <div>
                         <label htmlFor="endsAt">End date</label>
+
                         <input
                             id="endsAt"
                             type="datetime-local"
@@ -278,8 +297,8 @@ export default function AdminExams() {
                             <tr key={exam.id}>
                                 <td>{exam.title}</td>
                                 <td>{getCourseName(exam)}</td>
-                                <td>{formatDate(exam.starts_at)}</td>
-                                <td>{formatDate(exam.ends_at)}</td>
+                                <td>{formatDate(exam.starts_at ?? exam.startsAt)}</td>
+                                <td>{formatDate(exam.ends_at ?? exam.endsAt)}</td>
                                 <td>{exam.question_count ?? 0}</td>
                                 <td>{exam.attempt_count ?? 0}</td>
                                 <td>
@@ -288,39 +307,39 @@ export default function AdminExams() {
 
                                 <td>
                                     <Link to={`/admin/exams/${exam.id}/questions`}>
-                                        Questions
-                                    </Link>
+Questions
+</Link>
 
-                                    {' '}
+{' '}
 
-                                    <Link to={`/admin/exams/${exam.id}/results`}>
-                                        Results
-                                    </Link>
+<Link to={`/admin/exams/${exam.id}/results`}>
+    Results
+</Link>
 
-                                    {' '}
+{' '}
 
-                                    {!locked && (
-                                        <>
-                                            <button
-                                                onClick={() => openEditForm(exam)}
-                                            >
-                                                Edit
-                                            </button>
+{!locked && (
+    <>
+        <button
+            onClick={() => openEditForm(exam)}
+        >
+            Edit
+        </button>
 
-                                            <button
-                                                onClick={() => handleDelete(exam.id)}
-                                            >
-                                                Delete
-                                            </button>
-                                        </>
-                                    )}
-                                </td>
-                            </tr>
-                        );
-                    })}
-                    </tbody>
-                </table>
-            )}
-        </div>
-    );
+        <button
+            onClick={() => handleDelete(exam.id)}
+        >
+            Delete
+        </button>
+    </>
+)}
+</td>
+</tr>
+);
+})}
+</tbody>
+</table>
+)}
+</div>
+);
 }
