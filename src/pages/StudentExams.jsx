@@ -1,20 +1,25 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { get } from '../api/client.js';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { get, post } from '../api/client.js';
 
-export default function StudentExams() {
-    const [exams, setExams] = useState([]);
+export default function StudentExam() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+
+    const [exam, setExam] = useState(null);
+    const [answers, setAnswers] = useState({});
     const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
 
     useEffect(() => {
-        loadExams();
-    }, []);
+        loadExam();
+    }, [id]);
 
-    const loadExams = async () => {
+    const loadExam = async () => {
         try {
-            const data = await get('/my/exams');
-            setExams(data);
+            const data = await get(`/my/exams/${id}`);
+            setExam(data);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -22,59 +27,95 @@ export default function StudentExams() {
         }
     };
 
-    const formatDate = (date) => {
-        if (!date) return '-';
-        const value = new Date(date);
-        if (Number.isNaN(value.getTime())) return '-';
-        return value.toLocaleString();
+    const handleChoiceChange = (questionId, choiceId) => {
+        setAnswers((current) => ({
+            ...current,
+            [questionId]: choiceId,
+        }));
     };
+
+    const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError('');
+    setSubmitting(true);
+
+    try {
+        const formattedAnswers = Object.entries(answers).map(
+            ([questionId, choiceId]) => ({
+                question_id: Number(questionId),
+                choice_id: Number(choiceId),
+            })
+        );
+
+        const result = await post(`/my/exams/${id}/submit`, {
+            answers: formattedAnswers,
+        });
+
+        navigate(`/student/exams/${id}/result`, { state: { result, examTitle: exam.title } });
+    } catch (err) {
+        setError(err.message);
+    } finally {
+        setSubmitting(false);
+    }
+};
 
     if (loading) {
         return (
             <div className="page">
-                <h1>Available Exams</h1>
+                <h1>Exam</h1>
                 <p>Loading...</p>
+            </div>
+        );
+    }
+
+    if (error && !exam) {
+        return (
+            <div className="page">
+                <h1>Exam</h1>
+                <p className="error">{error}</p>
+                <Link to="/student">← Back to exams</Link>
             </div>
         );
     }
 
     return (
         <div className="page">
-            <h1>Available Exams</h1>
+            <Link to="/student">← Back to exams</Link>
+
+            <h1>{exam.title}</h1>
+
+            {exam.description && <p>{exam.description}</p>}
+
             {error && <p className="error">{error}</p>}
-            {!error && exams.length === 0 ? (
-                <p>No exams are currently available.</p>
-            ) : (
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {exams.map((exam) => (
-                        <tr key={exam.id}>
-                            <td>{exam.title}</td>
-                            <td>{exam.description || '-'}</td>
-                            <td>{formatDate(exam.startsAt)}</td>
-                            <td>{formatDate(exam.endsAt)}</td>
-                            <td>
-                                <Link to={`/student/exams/${exam.id}`}>
-                                    Take Exam
-                                </Link>
-                            </td>
-                        </tr>
+
+            <form onSubmit={handleSubmit}>
+                {exam.questions
+                    .slice()
+                    .sort((a, b) => a.position - b.position)
+                    .map((question, index) => (
+                        <div key={question.id}>
+                            <h2>{index + 1}. {question.statement}</h2>
+                            <p>Points: {question.points}</p>
+
+                            {question.choices.map((choice) => (
+                                <label key={choice.id}>
+                                    <input
+                                        type="radio"
+                                        name={`question-${question.id}`}
+                                        value={choice.id}
+                                        checked={answers[question.id] === choice.id}
+                                        onChange={() => handleChoiceChange(question.id, choice.id)}
+                                    />
+                                    {choice.text}
+                                </label>
+                            ))}
+                        </div>
                     ))}
-                    </tbody>
-                </table>
-            )}
-            <p>
-                <Link to="/student">← Back to dashboard</Link>
-            </p>
+
+                <button type="submit" disabled={submitting}>
+                    {submitting ? 'Submitting...' : 'Submit Exam'}
+                </button>
+            </form>
         </div>
     );
 }
