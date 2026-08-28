@@ -26,7 +26,7 @@ export default function AdminExamResults() {
     return (
         <div className="page">
             <Link to="/admin/exams">← Back to Exams</Link>
-            <h1>Exam Results</h1>
+            <h1>Exam Results{results?.exam?.title ? ` — ${results.exam.title}` : ''}</h1>
             {error && <p className="error">{error}</p>}
             {!results ? (
                 <p>Loading...</p>
@@ -34,29 +34,28 @@ export default function AdminExamResults() {
                 <>
                     <section>
                         <h2>Summary</h2>
-                        <p>Attempts: {results.attemptsCount}</p>
-                        <p>Average score: {results.average}</p>
+                        <p>Total points: {results.total_points}</p>
+                        <p>Attempts: {results.attempt_count}</p>
+                        <p>Average score: {results.average ?? '—'}</p>
                     </section>
                     <h2>Student Results</h2>
-                    {results.rows.length === 0 ? (
+                    {results.results.length === 0 ? (
                         <p>No results found.</p>
                     ) : (
                         <table>
                             <thead>
                             <tr>
                                 <th>Student</th>
-                                <th>Email</th>
                                 <th>Score</th>
                                 <th>Submitted At</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {results.rows.map((row) => (
-                                <tr key={row.attemptId ?? row.id}>
-                                    <td>{row.fullName}</td>
-                                    <td>{row.email}</td>
+                            {results.results.map((row) => (
+                                <tr key={row.student_id}>
+                                    <td>{row.name}</td>
                                     <td>{row.score}</td>
-                                    <td>{formatDate(row.submittedAt)}</td>
+                                    <td>{formatDate(row.submitted_at)}</td>
                                 </tr>
                             ))}
                             </tbody>
