@@ -39,6 +39,10 @@ export default function StudentExamResult() {
             c.selectedChoiceLabel ??
             c.selected_choice_label ??
             'No response';
+          const correctLabel =
+            c.correctChoiceLabel ??
+            c.correct_choice_label ??
+            '';
 
           return (
             <div
@@ -57,6 +61,9 @@ export default function StudentExamResult() {
                 ({c.points} pts)
               </p>
               <p>Your answer : {selected}</p>
+              {!isCorrect && (
+                <p>Correct answer : {correctLabel}</p>
+              )}
               <p>{isCorrect ? '✓ Correct' : '✗ Incorrect'}</p>
             </div>
           );
