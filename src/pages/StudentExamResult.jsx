@@ -36,9 +36,8 @@ export default function StudentExamResult() {
         corrections.map((c, index) => {
           const isCorrect = c.is_correct ?? c.isCorrect;
           const selected =
-            c.selected_choice_id ??
-            c.selectedChoiceId ??
-            c.student_choice_id ??
+            c.selectedChoiceLabel ??
+            c.selected_choice_label ??
             'No response';
 
           return (
